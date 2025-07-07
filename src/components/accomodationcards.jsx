@@ -1,6 +1,38 @@
 import { Thermometer, MapPin, Star } from 'lucide-react';
 
-function AccommodationCards({ stays }) {
+function AccommodationCards() {
+
+
+  const stays = [
+  {
+    name: "Beachside Villa",
+    city: "Goa",
+    temperature: "30°C",
+    rating: 4.8,
+    price: "$150",
+    weather: "Sunny",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    name: "Mountain Retreat",
+    city: "Manali",
+    temperature: "16°C",
+    rating: 4.6,
+    price: "$120",
+    weather: "Cloudy",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    name: "Desert Camp",
+    city: "Jaisalmer",
+    temperature: "38°C",
+    rating: 4.2,
+    price: "$90",
+    weather: "Hot",
+    image: "https://images.unsplash.com/photo-1575311373934-376b9dc1c9fc?auto=format&fit=crop&w=800&q=80"
+  }
+];
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,7 +52,7 @@ function AccommodationCards({ stays }) {
               {/* Image */}
               <div className="relative">
                 <img
-                  src={stay.image}
+                  src={stay.image || "https://via.placeholder.com/400x300?text=No+Image"}
                   alt={stay.name}
                   className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
                 />
