@@ -3,6 +3,7 @@ import Header from './components/header';
 import Footer from './components/footer';
 import Hero from './components/hero';
 import SearchForm from './components/searchform';
+import TravelPlans from './components/TravelPlans';
 import DestinationCarousel from './components/destinationcarousel';
 import AccommodationCards from './components/accomodationcards';
 import WeatherInsights from './components/weatherinsights';
@@ -87,22 +88,28 @@ const demoStays = [
 function App() {
   const [destinations, setDestinations] = useState(demoDestinations);
   const [currentDestination, setCurrentDestination] = useState(0);
+  const [currentView, setCurrentView] = useState('travel');
+  const [showBeachAnalyzer, setShowBeachAnalyzer] = useState(false);
 
-  const [currentView, setCurrentView] = useState('travel');                     // 👈 view state
-  const [showBeachAnalyzer, setShowBeachAnalyzer] = useState(false);           // 👈 beach analyzer popup toggle
+  // State for SearchForm props
+  const [searchQuery, setSearchQuery] = useState("");                  
+  const [checkIn, setCheckIn] = useState("");                          
+  const [checkOut, setCheckOut] = useState("");                        
+  const [guests, setGuests] = useState(1);                             
+  const [selectedDestination, setSelectedDestination] = useState(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <Header />
 
-      {/* 🌊 Beach Safety Analyzer Popup */}
+      {/* Beach Safety Analyzer Popup */}
       <BeachSafetyAnalyzer
         isOpen={showBeachAnalyzer}
         onToggle={() => setShowBeachAnalyzer(!showBeachAnalyzer)}
         onClose={() => setShowBeachAnalyzer(false)}
       />
 
-      {/* 🌊 Floating Beach Analyzer Toggle Button */}
+      {/* Floating Beach Analyzer Toggle Button */}
       <div className="fixed top-20 right-4 z-40">
         <button
           onClick={() => setShowBeachAnalyzer(!showBeachAnalyzer)}
@@ -115,7 +122,7 @@ function App() {
         </button>
       </div>
 
-      {/* 🌊 View Switcher */}
+      {/* View Switcher */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <div className="flex justify-center mb-6">
           <div className="bg-white/90 backdrop-blur-sm rounded-lg p-1 border border-white/20">
@@ -143,11 +150,30 @@ function App() {
         </div>
       </div>
 
-      {/* 🌤 Travel View OR 🌊 Beach View */}
+      {/* Travel View OR Beach View */}
       {currentView === 'travel' ? (
         <>
           <Hero />
-          <SearchForm />
+          <SearchForm
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            checkIn={checkIn}
+            setCheckIn={setCheckIn}
+            checkOut={checkOut}
+            setCheckOut={setCheckOut}
+            guests={guests}
+            setGuests={setGuests}
+            selectedDestination={selectedDestination}
+            setSelectedDestination={setSelectedDestination}
+          />
+          
+          {/* Travel Plans Section - Shows when destination is selected */}
+          {selectedDestination && (
+            <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+              <TravelPlans destination={selectedDestination} />
+            </div>
+          )}
+          
           <DestinationCarousel
             destinations={destinations}
             currentDestination={currentDestination}
