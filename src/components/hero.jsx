@@ -13,8 +13,8 @@ function Hero({ preferredWeather, setPreferredWeather }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Travel by
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Weather</span>
+            Coastal
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Quest</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Discover perfect destinations based on your ideal climate. Find accommodations where the weather matches your mood.
