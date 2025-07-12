@@ -55,9 +55,10 @@ function Hero({ preferredWeather, setPreferredWeather }) {
           <div className="mb-6">
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-2 animate-fade-in-up">
               Coastal
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-600 animate-gradient-x">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 to-violet-600 animate-gradient-x">
                 Quest
               </span>
+                 {/* <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Quest</span> */}
             </h1>
             <div className="flex items-center justify-center space-x-2 text-blue-600 animate-fade-in-up-delayed">
               <Waves className="h-6 w-6 animate-pulse" />
