@@ -30,8 +30,6 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [showTravelPlans, setShowTravelPlans] = useState(false);
-  const [selectedLocationPlans, setSelectedLocationPlans] = useState([]);
 
   // Enhanced beach search functionality
   const searchBeaches = async (query) => {
@@ -97,103 +95,6 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
     setSearchResults(mockResults.slice(0, 8));
   };
 
-  // Travel plans data
-  const travelPlansData = {
-    'Goa': [
-      {
-        id: 1,
-        name: 'Beach Hopper Package',
-        duration: '4 Days / 3 Nights',
-        budget: '₹15,000 - ₹25,000',
-        highlights: ['North Goa beaches', 'Water sports', 'Nightlife', 'Portuguese heritage'],
-        hotels: [
-          { name: 'Beach Resort Calangute', rating: 4.2, price: '₹3,500/night' },
-          { name: 'Anjuna Beach Hotel', rating: 4.0, price: '₹2,800/night' }
-        ],
-        activities: ['Parasailing', 'Jet skiing', 'Beach clubs', 'Fort Aguada visit']
-      },
-      {
-        id: 2,
-        name: 'Cultural Goa Experience',
-        duration: '5 Days / 4 Nights', 
-        budget: '₹20,000 - ₹35,000',
-        highlights: ['Old Goa churches', 'Spice plantations', 'Local cuisine', 'Art galleries'],
-        hotels: [
-          { name: 'Heritage Villa Panjim', rating: 4.5, price: '₹4,200/night' },
-          { name: 'Boutique Stay Fontainhas', rating: 4.3, price: '₹3,800/night' }
-        ],
-        activities: ['Church tours', 'Spice farm visit', 'Cooking classes', 'River cruise']
-      },
-      {
-        id: 3,
-        name: 'Adventure Goa',
-        duration: '3 Days / 2 Nights',
-        budget: '₹12,000 - ₹20,000', 
-        highlights: ['Water sports', 'Trekking', 'Scuba diving', 'Beach camping'],
-        hotels: [
-          { name: 'Adventure Beach Camp', rating: 3.8, price: '₹2,200/night' },
-          { name: 'Coastal Adventure Resort', rating: 4.1, price: '₹3,000/night' }
-        ],
-        activities: ['Scuba diving', 'Dudhsagar trek', 'Kayaking', 'Beach volleyball']
-      }
-    ],
-    'Kerala': [
-      {
-        id: 1,
-        name: 'Backwater & Beach Combo',
-        duration: '6 Days / 5 Nights',
-        budget: '₹25,000 - ₹40,000',
-        highlights: ['Kovalam beach', 'Alleppey backwaters', 'Ayurvedic spa', 'Local cuisine'],
-        hotels: [
-          { name: 'Kovalam Beach Resort', rating: 4.4, price: '₹4,500/night' },
-          { name: 'Backwater Houseboat', rating: 4.6, price: '₹6,000/night' }
-        ],
-        activities: ['Beach relaxation', 'Houseboat cruise', 'Ayurvedic treatments', 'Fishing']
-      },
-      {
-        id: 2,
-        name: 'Hill Station & Coast',
-        duration: '7 Days / 6 Nights',
-        budget: '₹30,000 - ₹50,000',
-        highlights: ['Munnar hills', 'Varkala cliffs', 'Tea plantations', 'Cliff beaches'],
-        hotels: [
-          { name: 'Munnar Tea Resort', rating: 4.3, price: '₹3,800/night' },
-          { name: 'Varkala Cliff Hotel', rating: 4.2, price: '₹3,200/night' }
-        ],
-        activities: ['Tea garden tours', 'Cliff walking', 'Yoga sessions', 'Local markets']
-      }
-    ],
-    'Tamil Nadu': [
-      {
-        id: 1,
-        name: 'Chennai Coastal Explorer',
-        duration: '4 Days / 3 Nights',
-        budget: '₹18,000 - ₹28,000',
-        highlights: ['Marina Beach', 'Mahabalipuram temples', 'Local street food', 'Cultural sites'],
-        hotels: [
-          { name: 'Marina Beach Hotel', rating: 4.1, price: '₹3,200/night' },
-          { name: 'Heritage Mahabalipuram', rating: 4.4, price: '₹4,000/night' }
-        ],
-        activities: ['Beach walks', 'Temple tours', 'Food tours', 'Cultural shows']
-      }
-    ]
-  };
-
-  const getLocationFromBeach = (beachName) => {
-    if (beachName.toLowerCase().includes('goa')) return 'Goa';
-    if (beachName.toLowerCase().includes('kerala')) return 'Kerala';
-    if (beachName.toLowerCase().includes('chennai') || beachName.toLowerCase().includes('tamil nadu')) return 'Tamil Nadu';
-    return null;
-  };
-
-  const showTravelPlansForLocation = (beachName) => {
-    const location = getLocationFromBeach(beachName);
-    if (location && travelPlansData[location]) {
-      setSelectedLocationPlans(travelPlansData[location]);
-      setShowTravelPlans(true);
-    }
-  };
-
   const mockAnalysisData = {
     'Marina Beach, Chennai': {
       safetyStatus: 'safe',
@@ -248,6 +149,60 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
         { time: '18:00', waveHeight: 2.9, windSpeed: 26, safety: 'caution' }
       ],
       lastUpdated: new Date().toISOString()
+    },
+    'Calangute Beach, Goa': {
+      safetyStatus: 'safe',
+      safetyScore: 78,
+      currentConditions: {
+        waveHeight: 1.5,
+        windSpeed: 12,
+        windDirection: 'W',
+        waterTemp: 29,
+        visibility: 9,
+        waterQuality: 'good',
+        currentStrength: 'mild'
+      },
+      activities: {
+        swimming: { status: 'safe', score: 85 },
+        surfing: { status: 'safe', score: 75 },
+        boating: { status: 'safe', score: 90 },
+        fishing: { status: 'safe', score: 80 },
+        diving: { status: 'safe', score: 70 }
+      },
+      alerts: [],
+      forecast: [
+        { time: '12:00', waveHeight: 1.4, windSpeed: 14, safety: 'safe' },
+        { time: '15:00', waveHeight: 1.6, windSpeed: 16, safety: 'safe' },
+        { time: '18:00', waveHeight: 1.3, windSpeed: 10, safety: 'safe' }
+      ],
+      lastUpdated: new Date().toISOString()
+    },
+    'Radhanagar Beach, Andaman': {
+      safetyStatus: 'safe',
+      safetyScore: 92,
+      currentConditions: {
+        waveHeight: 0.8,
+        windSpeed: 8,
+        windDirection: 'E',
+        waterTemp: 27,
+        visibility: 12,
+        waterQuality: 'excellent',
+        currentStrength: 'mild'
+      },
+      activities: {
+        swimming: { status: 'safe', score: 95 },
+        surfing: { status: 'caution', score: 60 },
+        boating: { status: 'safe', score: 90 },
+        fishing: { status: 'safe', score: 85 },
+        diving: { status: 'safe', score: 90 }
+      },
+      alerts: [],
+      forecast: [
+        { time: '12:00', waveHeight: 0.9, windSpeed: 10, safety: 'safe' },
+        { time: '15:00', waveHeight: 1.0, windSpeed: 12, safety: 'safe' },
+        { time: '18:00', waveHeight: 0.7, windSpeed: 6, safety: 'safe' }
+      ],
+      lastUpdated: new Date().toISOString()
     }
   };
 
@@ -257,7 +212,39 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
     setLoading(true);
     // Simulate API call
     setTimeout(() => {
-      setAnalysisData(mockAnalysisData[selectedBeach] || null);
+      const data = mockAnalysisData[selectedBeach];
+      if (data) {
+        setAnalysisData(data);
+      } else {
+        // Generate random data for beaches not in mock data
+        setAnalysisData({
+          safetyStatus: Math.random() > 0.7 ? 'safe' : Math.random() > 0.4 ? 'caution' : 'unsafe',
+          safetyScore: Math.floor(Math.random() * 40) + 60,
+          currentConditions: {
+            waveHeight: (Math.random() * 2 + 0.5).toFixed(1),
+            windSpeed: Math.floor(Math.random() * 20) + 10,
+            windDirection: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.floor(Math.random() * 8)],
+            waterTemp: Math.floor(Math.random() * 8) + 25,
+            visibility: Math.floor(Math.random() * 8) + 5,
+            waterQuality: ['excellent', 'good', 'moderate'][Math.floor(Math.random() * 3)],
+            currentStrength: ['mild', 'moderate', 'strong'][Math.floor(Math.random() * 3)]
+          },
+          activities: {
+            swimming: { status: 'safe', score: Math.floor(Math.random() * 30) + 70 },
+            surfing: { status: 'caution', score: Math.floor(Math.random() * 40) + 50 },
+            boating: { status: 'safe', score: Math.floor(Math.random() * 25) + 75 },
+            fishing: { status: 'safe', score: Math.floor(Math.random() * 30) + 70 },
+            diving: { status: 'caution', score: Math.floor(Math.random() * 35) + 55 }
+          },
+          alerts: Math.random() > 0.7 ? ['Moderate wave conditions'] : [],
+          forecast: [
+            { time: '12:00', waveHeight: (Math.random() * 2 + 0.5).toFixed(1), windSpeed: Math.floor(Math.random() * 20) + 10, safety: 'safe' },
+            { time: '15:00', waveHeight: (Math.random() * 2 + 0.5).toFixed(1), windSpeed: Math.floor(Math.random() * 20) + 10, safety: 'safe' },
+            { time: '18:00', waveHeight: (Math.random() * 2 + 0.5).toFixed(1), windSpeed: Math.floor(Math.random() * 20) + 10, safety: 'safe' }
+          ],
+          lastUpdated: new Date().toISOString()
+        });
+      }
       setLoading(false);
     }, 1500);
   };
@@ -348,20 +335,13 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
               </div>
             )}
           </div>
-          <div className="flex space-x-2 mt-2">
+          <div className="mt-3">
             <button
               onClick={analyzeBeach}
               disabled={!selectedBeach || loading}
-              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
             >
               {loading ? 'Analyzing...' : 'Analyze Safety'}
-            </button>
-            <button
-              onClick={() => showTravelPlansForLocation(selectedBeach)}
-              disabled={!selectedBeach || !getLocationFromBeach(selectedBeach)}
-              className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-            >
-              Travel Plans
             </button>
           </div>
         </div>
@@ -530,81 +510,6 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
           </div>
         )}
 
-        {/* Travel Plans Modal */}
-        {showTravelPlans && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Travel Plans for {getLocationFromBeach(selectedBeach)}
-                  </h2>
-                  <button
-                    onClick={() => setShowTravelPlans(false)}
-                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-              
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {selectedLocationPlans.map((plan) => (
-                    <div key={plan.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
-                      <div className="mb-4">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{plan.name}</h3>
-                        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                          <span>{plan.duration}</span>
-                          <span className="font-semibold text-green-600">{plan.budget}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Highlights</h4>
-                        <div className="flex flex-wrap gap-1">
-                          {plan.highlights.map((highlight, idx) => (
-                            <span key={idx} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                              {highlight}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Recommended Hotels</h4>
-                        {plan.hotels.map((hotel, idx) => (
-                          <div key={idx} className="text-sm mb-1">
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium">{hotel.name}</span>
-                              <span className="text-yellow-600">★ {hotel.rating}</span>
-                            </div>
-                            <div className="text-gray-600">{hotel.price}</div>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div className="mb-4">
-                        <h4 className="font-medium text-gray-900 mb-2">Activities</h4>
-                        <div className="flex flex-wrap gap-1">
-                          {plan.activities.map((activity, idx) => (
-                            <span key={idx} className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                              {activity}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all">
-                        Book This Plan
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
         {/* No Data State */}
         {!analysisData && !loading && selectedBeach && (
           <div className="text-center py-8 text-gray-500">
