@@ -20,8 +20,8 @@ const teamMembers = [
   },
   {
     name: 'Rahul',
-    linkedin: 'https://linkedin.com/in/neha',
-    github: 'https://github.com/rahuldev'
+    linkedin: 'https://github.com/rahulbhandariitsreal',
+    github: 'https://github.com/rahulbhandariitsreal'
   }
 ];
 

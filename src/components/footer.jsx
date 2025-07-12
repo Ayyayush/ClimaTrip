@@ -32,7 +32,7 @@ function Footer() {
             <ul className="space-y-2 text-sm">
               <li className="flex items-center">
                 <Mail className="h-4 w-4 mr-2" />
-                support@climago.com
+                support@ClimaTrip.com
               </li>
               <li className="flex space-x-4 mt-3">
                 <a href="#" className="hover:text-white"><Facebook className="h-5 w-5" /></a>
