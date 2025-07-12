@@ -28,17 +28,171 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
     alerts: false
   });
 
-  // Mock beach data - replace with actual INCOIS API
-  const beachOptions = [
-    'Marina Beach, Chennai',
-    'Kovalam Beach, Kerala',
-    'Goa Beaches',
-    'Puri Beach, Odisha',
-    'Digha Beach, West Bengal',
-    'Varkala Beach, Kerala',
-    'Radhanagar Beach, Andaman',
-    'Calangute Beach, Goa'
-  ];
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showTravelPlans, setShowTravelPlans] = useState(false);
+  const [selectedLocationPlans, setSelectedLocationPlans] = useState([]);
+
+  // Enhanced beach search functionality
+  const searchBeaches = async (query) => {
+    if (query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    
+    // Simulate API search - replace with actual beach search API
+    const mockResults = [
+      'Marina Beach, Chennai',
+      'Kovalam Beach, Kerala', 
+      'Calangute Beach, Goa',
+      'Baga Beach, Goa',
+      'Anjuna Beach, Goa',
+      'Puri Beach, Odisha',
+      'Digha Beach, West Bengal',
+      'Varkala Beach, Kerala',
+      'Radhanagar Beach, Andaman',
+      'Juhu Beach, Mumbai',
+      'Chowpatty Beach, Mumbai',
+      'Mahabalipuram Beach, Tamil Nadu',
+      'Pondicherry Beach',
+      'Gokarna Beach, Karnataka',
+      'Om Beach, Karnataka',
+      'Murudeshwar Beach, Karnataka',
+      'Tarkarli Beach, Maharashtra',
+      'Kashid Beach, Maharashtra',
+      'Mandrem Beach, Goa',
+      'Palolem Beach, Goa',
+      'Arambol Beach, Goa',
+      'Candolim Beach, Goa',
+      'Morjim Beach, Goa',
+      'Agonda Beach, Goa',
+      'Cherai Beach, Kerala',
+      'Marari Beach, Kerala',
+      'Bekal Beach, Kerala',
+      'Kappad Beach, Kerala',
+      'Lighthouse Beach, Kerala',
+      'Elliot Beach, Chennai',
+      'Besant Nagar Beach, Chennai',
+      'Dhanushkodi Beach, Tamil Nadu',
+      'Kanyakumari Beach, Tamil Nadu',
+      'Rameswaram Beach, Tamil Nadu',
+      'Visakhapatnam Beach, Andhra Pradesh',
+      'Rushikonda Beach, Andhra Pradesh',
+      'Yarada Beach, Andhra Pradesh',
+      'Chandrabhaga Beach, Odisha',
+      'Gopalpur Beach, Odisha',
+      'Chilika Lake, Odisha',
+      'Mandarmani Beach, West Bengal',
+      'Shankarpur Beach, West Bengal',
+      'Bakkhali Beach, West Bengal',
+      'Neil Island Beach, Andaman',
+      'Ross Island Beach, Andaman',
+      'Elephant Beach, Andaman',
+      'Corbyn Cove Beach, Andaman',
+      'Wandoor Beach, Andaman'
+    ].filter(beach => 
+      beach.toLowerCase().includes(query.toLowerCase())
+    );
+    
+    setSearchResults(mockResults.slice(0, 8));
+  };
+
+  // Travel plans data
+  const travelPlansData = {
+    'Goa': [
+      {
+        id: 1,
+        name: 'Beach Hopper Package',
+        duration: '4 Days / 3 Nights',
+        budget: '₹15,000 - ₹25,000',
+        highlights: ['North Goa beaches', 'Water sports', 'Nightlife', 'Portuguese heritage'],
+        hotels: [
+          { name: 'Beach Resort Calangute', rating: 4.2, price: '₹3,500/night' },
+          { name: 'Anjuna Beach Hotel', rating: 4.0, price: '₹2,800/night' }
+        ],
+        activities: ['Parasailing', 'Jet skiing', 'Beach clubs', 'Fort Aguada visit']
+      },
+      {
+        id: 2,
+        name: 'Cultural Goa Experience',
+        duration: '5 Days / 4 Nights', 
+        budget: '₹20,000 - ₹35,000',
+        highlights: ['Old Goa churches', 'Spice plantations', 'Local cuisine', 'Art galleries'],
+        hotels: [
+          { name: 'Heritage Villa Panjim', rating: 4.5, price: '₹4,200/night' },
+          { name: 'Boutique Stay Fontainhas', rating: 4.3, price: '₹3,800/night' }
+        ],
+        activities: ['Church tours', 'Spice farm visit', 'Cooking classes', 'River cruise']
+      },
+      {
+        id: 3,
+        name: 'Adventure Goa',
+        duration: '3 Days / 2 Nights',
+        budget: '₹12,000 - ₹20,000', 
+        highlights: ['Water sports', 'Trekking', 'Scuba diving', 'Beach camping'],
+        hotels: [
+          { name: 'Adventure Beach Camp', rating: 3.8, price: '₹2,200/night' },
+          { name: 'Coastal Adventure Resort', rating: 4.1, price: '₹3,000/night' }
+        ],
+        activities: ['Scuba diving', 'Dudhsagar trek', 'Kayaking', 'Beach volleyball']
+      }
+    ],
+    'Kerala': [
+      {
+        id: 1,
+        name: 'Backwater & Beach Combo',
+        duration: '6 Days / 5 Nights',
+        budget: '₹25,000 - ₹40,000',
+        highlights: ['Kovalam beach', 'Alleppey backwaters', 'Ayurvedic spa', 'Local cuisine'],
+        hotels: [
+          { name: 'Kovalam Beach Resort', rating: 4.4, price: '₹4,500/night' },
+          { name: 'Backwater Houseboat', rating: 4.6, price: '₹6,000/night' }
+        ],
+        activities: ['Beach relaxation', 'Houseboat cruise', 'Ayurvedic treatments', 'Fishing']
+      },
+      {
+        id: 2,
+        name: 'Hill Station & Coast',
+        duration: '7 Days / 6 Nights',
+        budget: '₹30,000 - ₹50,000',
+        highlights: ['Munnar hills', 'Varkala cliffs', 'Tea plantations', 'Cliff beaches'],
+        hotels: [
+          { name: 'Munnar Tea Resort', rating: 4.3, price: '₹3,800/night' },
+          { name: 'Varkala Cliff Hotel', rating: 4.2, price: '₹3,200/night' }
+        ],
+        activities: ['Tea garden tours', 'Cliff walking', 'Yoga sessions', 'Local markets']
+      }
+    ],
+    'Tamil Nadu': [
+      {
+        id: 1,
+        name: 'Chennai Coastal Explorer',
+        duration: '4 Days / 3 Nights',
+        budget: '₹18,000 - ₹28,000',
+        highlights: ['Marina Beach', 'Mahabalipuram temples', 'Local street food', 'Cultural sites'],
+        hotels: [
+          { name: 'Marina Beach Hotel', rating: 4.1, price: '₹3,200/night' },
+          { name: 'Heritage Mahabalipuram', rating: 4.4, price: '₹4,000/night' }
+        ],
+        activities: ['Beach walks', 'Temple tours', 'Food tours', 'Cultural shows']
+      }
+    ]
+  };
+
+  const getLocationFromBeach = (beachName) => {
+    if (beachName.toLowerCase().includes('goa')) return 'Goa';
+    if (beachName.toLowerCase().includes('kerala')) return 'Kerala';
+    if (beachName.toLowerCase().includes('chennai') || beachName.toLowerCase().includes('tamil nadu')) return 'Tamil Nadu';
+    return null;
+  };
+
+  const showTravelPlansForLocation = (beachName) => {
+    const location = getLocationFromBeach(beachName);
+    if (location && travelPlansData[location]) {
+      setSelectedLocationPlans(travelPlansData[location]);
+      setShowTravelPlans(true);
+    }
+  };
 
   const mockAnalysisData = {
     'Marina Beach, Chennai': {
@@ -163,25 +317,51 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
         {/* Beach Selection */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select Beach Location
+            Search Beach Location
           </label>
-          <div className="flex space-x-2">
-            <select
-              value={selectedBeach}
-              onChange={(e) => setSelectedBeach(e.target.value)}
-              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="">Choose a beach...</option>
-              {beachOptions.map((beach) => (
-                <option key={beach} value={beach}>{beach}</option>
-              ))}
-            </select>
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search any beach (e.g., Goa, Marina Beach, Kovalam...)"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                searchBeaches(e.target.value);
+              }}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            {searchResults.length > 0 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                {searchResults.map((beach, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setSelectedBeach(beach);
+                      setSearchQuery(beach);
+                      setSearchResults([]);
+                    }}
+                    className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm border-b border-gray-100 last:border-b-0"
+                  >
+                    {beach}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="flex space-x-2 mt-2">
             <button
               onClick={analyzeBeach}
               disabled={!selectedBeach || loading}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
             >
-              {loading ? 'Analyzing...' : 'Analyze'}
+              {loading ? 'Analyzing...' : 'Analyze Safety'}
+            </button>
+            <button
+              onClick={() => showTravelPlansForLocation(selectedBeach)}
+              disabled={!selectedBeach || !getLocationFromBeach(selectedBeach)}
+              className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              Travel Plans
             </button>
           </div>
         </div>
@@ -350,6 +530,81 @@ const BeachSafetyAnalyzer = ({ isOpen, onToggle, onClose }) => {
           </div>
         )}
 
+        {/* Travel Plans Modal */}
+        {showTravelPlans && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Travel Plans for {getLocationFromBeach(selectedBeach)}
+                  </h2>
+                  <button
+                    onClick={() => setShowTravelPlans(false)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {selectedLocationPlans.map((plan) => (
+                    <div key={plan.id} className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow">
+                      <div className="mb-4">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{plan.name}</h3>
+                        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                          <span>{plan.duration}</span>
+                          <span className="font-semibold text-green-600">{plan.budget}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <h4 className="font-medium text-gray-900 mb-2">Highlights</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {plan.highlights.map((highlight, idx) => (
+                            <span key={idx} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                              {highlight}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <h4 className="font-medium text-gray-900 mb-2">Recommended Hotels</h4>
+                        {plan.hotels.map((hotel, idx) => (
+                          <div key={idx} className="text-sm mb-1">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium">{hotel.name}</span>
+                              <span className="text-yellow-600">★ {hotel.rating}</span>
+                            </div>
+                            <div className="text-gray-600">{hotel.price}</div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="mb-4">
+                        <h4 className="font-medium text-gray-900 mb-2">Activities</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {plan.activities.map((activity, idx) => (
+                            <span key={idx} className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                              {activity}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all">
+                        Book This Plan
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {/* No Data State */}
         {!analysisData && !loading && selectedBeach && (
           <div className="text-center py-8 text-gray-500">
