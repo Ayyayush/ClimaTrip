@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, AlertTriangle, Info, CheckCircle, X } from 'lucide-react';
+import { Bell, AlertTriangle, Info, CheckCircle, X, MapPin, Clock } from 'lucide-react';
 
-const BeachAlerts = () => {
+const BeachAlerts = ({ onClose }) => {
   const [alerts, setAlerts] = useState([]);
   const [filter, setFilter] = useState('all');
 
@@ -110,7 +110,7 @@ const BeachAlerts = () => {
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg border border-white/20 overflow-hidden h-full">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">
@@ -119,6 +119,17 @@ const BeachAlerts = () => {
             <h2 className="text-xl font-semibold text-gray-900">Beach Safety Alerts</h2>
           </div>
           <div className="flex items-center space-x-2">
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-600">Filter:</span>
             <select
               value={filter}
@@ -132,7 +143,6 @@ const BeachAlerts = () => {
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
-          </div>
         </div>
 
         {/* Alert Summary */}
