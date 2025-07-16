@@ -178,7 +178,7 @@ function App() {
                 currentView === 'travel' ? 'bg-blue-600 text-white shadow-md' : 'text-gray-600 hover:text-blue-600'
               }`}
             >
-              Travel by Weather
+              Travel Dashboard
             </button>
             <button
               onClick={() => setCurrentView('beach-safety')}
