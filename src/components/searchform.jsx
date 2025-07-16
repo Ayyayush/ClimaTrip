@@ -400,7 +400,20 @@ const SearchForm = ({
       setShowFromSuggestions(false);
     }
   };
+  main
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+=======
   const handleToSearch = (value) => {
     setToLocation(value);
     if (value.length > 1) {
@@ -442,6 +455,7 @@ const SearchForm = ({
       setShowTravelPlanPopup(true);
     }
   };
+ main
 
   const togglePlan = (planId) => {
     setExpandedPlan(expandedPlan === planId ? null : planId);

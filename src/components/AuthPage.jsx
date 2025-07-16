@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Sun, Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const AuthPage = ({ onLogin, onCancel }) => {
   const [isSignIn, setIsSignIn] = useState(true);
@@ -19,17 +21,72 @@ const AuthPage = ({ onLogin, onCancel }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const username = 'aman@gmail.com'; // Replace with real values
+    const password = '1234';
+    const authHeader = 'Basic ' + btoa(username + ':' + password);
+    try{
     if (isSignIn) {
-      onLogin(formData.email);
+      const response = await axios.post("http://localhost:8080/login", {
+          email: formData.email,
+          password: formData.password
+      },
+      {
+          headers:{
+              Authorization: authHeader,
+             'Content-Type': 'application/json'
+
+          }
+      }
+      );
+      if (response.status === 200) {
+        onLogin(formData.email); // Success
+      }  
+       else{
+           toast.error("Username or password is incorrect");
+       } 
+      
     } else {
       if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match!');
+        toast.error('Passwords do not match!');
         return;
       }
-      onLogin(formData.email);
+      const response = await axios.post("http://localhost:8080/register", {
+          email: formData.email,
+          password: formData.password
+      },
+      {
+          headers:{
+              Authorization: authHeader,
+             'Content-Type': 'application/json'
+
+          }
+      }
+      );
+      if (response.status === 200) {
+         toast.success("SuccessFully Registered");
+         setIsSignIn(true);
+      }  
+       else{
+           toast.error("User already exists");
+       } 
+      
     }
+  }catch (error) {
+    if (error.response) {
+      if (error.response.status === 401) {
+        alert("Unauthorized. Check Basic Auth credentials.");
+      } else if (error.response.status === 404) {
+        alert("User not found. Please sign up.");
+      } else {
+        alert(`Error: ${error.response.data.message || 'Something went wrong.'}`);
+      }
+    } else {
+      alert("Network error or server unreachable.");
+    }
+  }
   };
 
   return (
