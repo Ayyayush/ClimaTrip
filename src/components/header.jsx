@@ -74,19 +74,18 @@ function Header({ user, onLogout, onShowAuth }) {
     <>
       <header className="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex flex-wrap justify-between items-center h-auto gap-y-3 py-3 md:py-0 md:h-16">
             {/* Logo */}
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
                 <Sun className="h-5 w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">ClimaTrip ☀️</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900">ClimaTrip ☀️</h1>
             </div>
 
             {/* Navbar */}
-            <nav className="hidden md:flex space-x-8">
+            <nav className="hidden md:flex space-x-6 text-sm font-medium">
               <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">Weather Stays</a>
-              <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">Forecast</a>
               <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">Destinations</a>
 
               {/* 🔔 Alerts Dropdown */}
@@ -155,14 +154,14 @@ function Header({ user, onLogout, onShowAuth }) {
             </nav>
 
             {/* Right Section */}
-            <div className="flex items-center space-x-4 relative">
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 relative">
               {/* Accordion Button */}
               <div className="relative">
                 <button
                   onClick={() => setShowAccordion(!showAccordion)}
-                  className="flex items-center gap-1 px-3 py-1 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow transition"
+                  className="flex items-center gap-1 px-3 py-1 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow transition text-sm"
                 >
-                  <span className="font-semibold text-sm">Design by Team</span>
+                  <span className="font-semibold">Design by Team</span>
                   <FaLinkedin className="text-blue-600" />
                 </button>
 
@@ -205,30 +204,31 @@ function Header({ user, onLogout, onShowAuth }) {
               </div>
 
               {/* Auth Buttons (Trigger Auth View) */}
-              {!user && (
-                <>
+              <div className="flex gap-2 items-center">
+                {!user ? (
+                  <>
+                    <button
+                      onClick={onShowAuth}
+                      className="text-gray-700 hover:text-blue-600 transition-colors text-sm"
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      onClick={onShowAuth}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:from-blue-700 hover:to-purple-700 transition-all"
+                    >
+                      Sign Up
+                    </button>
+                  </>
+                ) : (
                   <button
-                    onClick={onShowAuth}
-                    className="text-gray-700 hover:text-blue-600 transition-colors"
+                    onClick={onLogout}
+                    className="text-red-500 font-medium hover:underline text-sm"
                   >
-                    Sign In
+                    Logout
                   </button>
-                  <button
-                    onClick={onShowAuth}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all"
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
-              {user && (
-                <button
-                  onClick={onLogout}
-                  className="text-red-500 font-medium hover:underline"
-                >
-                  Logout
-                </button>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
