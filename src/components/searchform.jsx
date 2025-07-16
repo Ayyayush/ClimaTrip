@@ -110,18 +110,18 @@ function SearchForm({
     }
   }, [searchQuery]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowSuggestions(false);
-      }
-    }
+  // useEffect(() => {
+  //   function handleClickOutside(event) {
+  //     if (searchRef.current && !searchRef.current.contains(event.target)) {
+  //       setShowSuggestions(false);
+  //     }
+  //   }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, []);
 
   const handleDestinationSelect = (destination) => {
     setSearchQuery(destination.name);
