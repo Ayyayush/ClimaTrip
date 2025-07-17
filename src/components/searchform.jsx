@@ -588,12 +588,12 @@ const SearchForm = ({
           </div>
         </div>
 
-        <div className="mt-8 flex justify-center">
+        {/* <div className="mt-8 flex justify-center">
           <button className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-700 transition-all transform hover:scale-105 flex items-center space-x-2 shadow-lg">
             <Search className="h-5 w-5" />
             <span>Search Perfect Stays</span>
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Travel Plan Generator Popup */}

@@ -45,9 +45,11 @@ const Dashboard = ({ user }) => {
   const [safetyStatus, setSafetyStatus] = useState('All Alerts');
   const [activeTab, setActiveTab] = useState('search'); // Default to search tab
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(true); // Show on login
   const [mapSearchQuery, setMapSearchQuery] = useState('');
   const [searchedDestination, setSearchedDestination] = useState(null);
+  
+  // Trip planning form state
 
   // User profile data
   const userProfile = {

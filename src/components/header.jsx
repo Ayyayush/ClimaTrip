@@ -16,9 +16,15 @@ const teamMembers = [
   },
   {
     name: 'Mukul',
-    linkedin: '',
+    linkedin: 'https://www.linkedin.com/in/mukul-sapra-ba31b3372/',
     github: 'https://github.com/DevGyaniMukul'
   },
+  {
+    name: 'Rahul',
+    linkedin: 'https://www.linkedin.com/in/rahul--bhandari/',
+    github: 'https://github.com/rahulbhandariitsreal'
+  },
+
 ];
 
 const recentAlerts = [
