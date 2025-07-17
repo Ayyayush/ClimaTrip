@@ -542,7 +542,7 @@ const SearchForm = ({
         </div>
         
         {/* Additional Search Options */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mt-8">
           <div className="relative">
             <label className="block text-sm font-semibold text-gray-700 mb-3">Check-in</label>
             <div className="relative">
@@ -551,7 +551,7 @@ const SearchForm = ({
                 type="date"
                 value={checkIn}
                 onChange={(e) => setCheckIn(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                className="w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm md:text-base"
               />
             </div>
           </div>
@@ -564,19 +564,19 @@ const SearchForm = ({
                 type="date"
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                className="w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-sm md:text-base"
               />
             </div>
           </div>
           
-          {/* <div className="relative">
+          <div className="relative sm:col-span-2 md:col-span-1">
             <label className="block text-sm font-semibold text-gray-700 mb-3">Travelers</label>
             <div className="relative">
               <Users className="absolute left-4 top-4 h-5 w-5 text-orange-500" />
               <select
                 value={guests}
                 onChange={(e) => setGuests(Number(e.target.value))}
-                className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all appearance-none bg-white"
+                className="w-full pl-12 pr-4 py-3 md:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all appearance-none bg-white text-sm md:text-base"
               >
                 <option value={1}>1 Traveler</option>
                 <option value={2}>2 Travelers</option>
@@ -585,15 +585,15 @@ const SearchForm = ({
                 <option value={5}>5+ Travelers</option>
               </select>
             </div>
-          </div> */}
+          </div>
         </div>
 
-        {/* <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex justify-center">
           <button className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-emerald-600 hover:to-teal-700 transition-all transform hover:scale-105 flex items-center space-x-2 shadow-lg">
             <Search className="h-5 w-5" />
             <span>Search Perfect Stays</span>
           </button>
-        </div> */}
+        </div>
       </div>
 
       {/* Travel Plan Generator Popup */}
