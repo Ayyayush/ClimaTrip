@@ -30,7 +30,11 @@ import {
   Filter,
   TrendingUp,
   Clock,
-  Shield
+  Shield,
+  Mail,
+  Phone,
+  Edit,
+  Camera
 } from 'lucide-react';
 import SearchForm from './searchform';
 
@@ -39,9 +43,23 @@ const Dashboard = ({ user }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedState, setSelectedState] = useState('All States');
   const [safetyStatus, setSafetyStatus] = useState('All Alerts');
-  const [activeTab, setActiveTab] = useState('search');
+  const [activeTab, setActiveTab] = useState('search'); // Default to search tab
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showSearchModal, setShowSearchModal] = useState(true); // Show search modal by default
+  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [mapSearchQuery, setMapSearchQuery] = useState('');
+  const [searchedDestination, setSearchedDestination] = useState(null);
+
+  // User profile data
+  const userProfile = {
+    name: user?.split('@')[0] || 'User',
+    email: user || 'user@example.com',
+    phone: '+91 9876543210',
+    location: 'Mumbai, India',
+    joinDate: 'January 2024',
+    totalTrips: 12,
+    favoriteDestinations: 8,
+    profileImage: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=200'
+  };
 
   // Navigation items
   const navigationItems = [
@@ -271,6 +289,24 @@ const Dashboard = ({ user }) => {
     setSelectedBeach(beach);
   };
 
+  const handleMapSearch = (query) => {
+    if (query.trim()) {
+      const foundBeach = beachLocations.find(beach => 
+        beach.name.toLowerCase().includes(query.toLowerCase()) ||
+        beach.location.toLowerCase().includes(query.toLowerCase()) ||
+        beach.state.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      if (foundBeach) {
+        setSearchedDestination(foundBeach);
+        setSelectedBeach(foundBeach);
+      }
+    } else {
+      setSearchedDestination(null);
+      setSelectedBeach(null);
+    }
+  };
+
   const renderSearchTab = () => (
     <div className="space-y-8">
       {/* Hero Section with Search */}
@@ -345,7 +381,13 @@ const Dashboard = ({ user }) => {
                   </div>
                 </div>
                 
-                <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                <button 
+                  onClick={() => {
+                    setActiveTab('dashboard');
+                    setSelectedBeach(beach);
+                  }}
+                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                >
                   View Details
                 </button>
               </div>
@@ -416,146 +458,336 @@ const Dashboard = ({ user }) => {
   );
 
   const renderDashboardTab = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Beach List */}
-      <div className="lg:col-span-1">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">Beach Locations</h2>
-            <p className="text-gray-600 text-sm mt-1">Select a beach to view details</p>
-          </div>
-          <div className="max-h-96 overflow-y-auto">
-            {filteredBeaches.map((beach) => (
-              <div
-                key={beach.id}
-                onClick={() => handleBeachSelect(beach)}
-                className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                  selectedBeach?.id === beach.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
-                }`}
+    <div className="space-y-6">
+      {/* Search Bar */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search destinations (e.g., Goa, Kerala, Chennai...)"
+            value={mapSearchQuery}
+            onChange={(e) => {
+              setMapSearchQuery(e.target.value);
+              handleMapSearch(e.target.value);
+            }}
+            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+      </div>
+
+      {/* Interactive Map */}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="p-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">Interactive Map</h2>
+          {!searchedDestination && (
+            <p className="text-gray-600 text-sm mt-1">Enter a destination in the search bar above</p>
+          )}
+        </div>
+        
+        <div className="relative h-96 bg-gradient-to-br from-blue-100 to-cyan-100">
+          {!searchedDestination ? (
+            // Empty state
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <MapPin className="h-16 w-16 text-blue-400 mb-4" />
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">Search a destination to view map</h3>
+              <p className="text-gray-500 text-center">Enter a destination in the search bar above</p>
+            </div>
+          ) : (
+            // Map with searched destination
+            <>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-200 via-cyan-100 to-green-100 opacity-50"></div>
+              
+              {/* Destination Marker */}
+              <button
+                className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all hover:scale-110 z-10"
+                style={{
+                  left: `${((searchedDestination.coordinates.lng - 68) / (97 - 68)) * 100}%`,
+                  top: `${((28 - searchedDestination.coordinates.lat) / (28 - 8)) * 100}%`
+                }}
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{beach.name}</h3>
-                    <p className="text-sm text-gray-600">{beach.location}</p>
+                <div className={`w-6 h-6 rounded-full border-2 border-white shadow-lg ${
+                  searchedDestination.safetyStatus === 'safe' ? 'bg-green-500' :
+                  searchedDestination.safetyStatus === 'caution' ? 'bg-yellow-500' : 'bg-red-500'
+                }`}>
+                </div>
+                <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded shadow-lg text-sm font-medium whitespace-nowrap">
+                  {searchedDestination.name}
+                </div>
+              </button>
+              
+              {/* Map Legend */}
+              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
+                <h4 className="text-sm font-semibold text-gray-900 mb-2">Legend</h4>
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="text-xs text-gray-700">Safe</span>
                   </div>
-                  <div className={`flex items-center space-x-1 px-2 py-1 rounded-full border ${getSafetyColor(beach.safetyStatus)}`}>
-                    {getSafetyIcon(beach.safetyStatus)}
-                    <span className="text-xs font-medium capitalize">{beach.safetyStatus}</span>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <span className="text-xs text-gray-700">Caution</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <span className="text-xs text-gray-700">Unsafe</span>
                   </div>
                 </div>
-                {beach.alerts.length > 0 && (
-                  <div className="mt-2 flex items-center space-x-1 text-red-600">
-                    <AlertTriangle className="h-3 w-3" />
-                    <span className="text-xs">{beach.alerts.length} alert(s)</span>
-                  </div>
-                )}
               </div>
-            ))}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Destination Details (shown when searched) */}
+      {searchedDestination && (
+        <div className="space-y-6">
+          {/* Beach Header */}
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">{searchedDestination.name}</h2>
+                <div className="flex items-center space-x-2 text-gray-600 mt-1">
+                  <MapPin className="h-4 w-4" />
+                  <span>{searchedDestination.location}</span>
+                </div>
+              </div>
+              <div className={`flex items-center space-x-2 px-4 py-2 rounded-full border ${getSafetyColor(searchedDestination.safetyStatus)}`}>
+                {getSafetyIcon(searchedDestination.safetyStatus)}
+                <span className="font-semibold capitalize">{searchedDestination.safetyStatus}</span>
+              </div>
+            </div>
+
+            {/* Current Conditions Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-blue-50 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <Waves className="h-5 w-5 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">Wave Height</span>
+                </div>
+                <p className="text-2xl font-bold text-blue-900">{searchedDestination.currentConditions.waveHeight}m</p>
+              </div>
+
+              <div className="bg-green-50 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <Wind className="h-5 w-5 text-green-600" />
+                  <span className="text-sm font-medium text-green-800">Wind Speed</span>
+                </div>
+                <p className="text-2xl font-bold text-green-900">{searchedDestination.currentConditions.windSpeed} km/h</p>
+              </div>
+
+              <div className="bg-purple-50 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <Thermometer className="h-5 w-5 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-800">Temperature</span>
+                </div>
+                <p className="text-2xl font-bold text-purple-900">{searchedDestination.currentConditions.waterTemp}°C</p>
+              </div>
+
+              <div className="bg-orange-50 rounded-lg p-4 text-center">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <Eye className="h-5 w-5 text-orange-600" />
+                  <span className="text-sm font-medium text-orange-800">Visibility</span>
+                </div>
+                <p className="text-2xl font-bold text-orange-900">{searchedDestination.currentConditions.visibility} km</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Water Quality & Current Strength */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <Droplets className="h-6 w-6 text-blue-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Water Quality</h3>
+              </div>
+              <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
+                searchedDestination.currentConditions.waterQuality === 'excellent' ? 'bg-green-100 text-green-800' :
+                searchedDestination.currentConditions.waterQuality === 'good' ? 'bg-blue-100 text-blue-800' :
+                searchedDestination.currentConditions.waterQuality === 'moderate' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {searchedDestination.currentConditions.waterQuality.charAt(0).toUpperCase() + searchedDestination.currentConditions.waterQuality.slice(1)}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <Navigation className="h-6 w-6 text-blue-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Current Strength</h3>
+              </div>
+              <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
+                searchedDestination.currentConditions.currentStrength === 'mild' ? 'bg-green-100 text-green-800' :
+                searchedDestination.currentConditions.currentStrength === 'moderate' ? 'bg-yellow-100 text-yellow-800' :
+                searchedDestination.currentConditions.currentStrength === 'strong' ? 'bg-orange-100 text-orange-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {searchedDestination.currentConditions.currentStrength.charAt(0).toUpperCase() + searchedDestination.currentConditions.currentStrength.slice(1)}
+              </div>
+            </div>
+          </div>
+
+          {/* Recreational Activities */}
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="flex items-center space-x-2 mb-6">
+              <Activity className="h-6 w-6 text-blue-600" />
+              <h3 className="text-lg font-semibold text-gray-900">Recreational Activities</h3>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {Object.entries(searchedDestination.activities).map(([activity, data]) => (
+                <div key={activity} className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-3xl mb-2">{getActivityIcon(activity)}</div>
+                  <h4 className="font-medium text-gray-900 capitalize mb-2">{activity}</h4>
+                  <span className={`text-xs px-3 py-1 rounded-full font-medium ${getActivityColor(data.status)}`}>
+                    {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Last Updated */}
+            <div className="mt-6 text-center text-sm text-gray-500">
+              Last updated: {new Date(searchedDestination.lastUpdated).toLocaleString()}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderProfileTab = () => (
+    <div className="space-y-6">
+      {/* Profile Header */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div className="flex items-center space-x-6">
+          <div className="relative">
+            <img
+              src={userProfile.profileImage}
+              alt="Profile"
+              className="w-24 h-24 rounded-full object-cover"
+            />
+            <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors">
+              <Camera className="h-4 w-4" />
+            </button>
+          </div>
+          
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold text-gray-900">{userProfile.name}</h2>
+            <p className="text-gray-600">{userProfile.email}</p>
+            <p className="text-gray-500 text-sm">Member since {userProfile.joinDate}</p>
+          </div>
+          
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+            <Edit className="h-4 w-4" />
+            <span>Edit Profile</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Profile Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Plane className="h-6 w-6 text-blue-600" />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900">{userProfile.totalTrips}</h3>
+          <p className="text-gray-600">Total Trips</p>
+        </div>
+        
+        <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Heart className="h-6 w-6 text-red-600" />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900">{userProfile.favoriteDestinations}</h3>
+          <p className="text-gray-600">Favorite Destinations</p>
+        </div>
+        
+        <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Star className="h-6 w-6 text-green-600" />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900">4.8</h3>
+          <p className="text-gray-600">Average Rating</p>
+        </div>
+      </div>
+
+      {/* Profile Information */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-6">Personal Information</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <User className="h-5 w-5 text-gray-400" />
+              <span className="text-gray-900">{userProfile.name}</span>
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <Mail className="h-5 w-5 text-gray-400" />
+              <span className="text-gray-900">{userProfile.email}</span>
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <Phone className="h-5 w-5 text-gray-400" />
+              <span className="text-gray-900">{userProfile.phone}</span>
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <MapPin className="h-5 w-5 text-gray-400" />
+              <span className="text-gray-900">{userProfile.location}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Interactive Beach Safety Map */}
-      <div className="lg:col-span-2">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
-          {/* Map Header */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center space-x-2">
-                <MapPin className="h-5 w-5 text-blue-600" />
-                <span>Interactive Beach Safety Map</span>
-              </h2>
-              <div className="flex items-center space-x-2">
-                <select
-                  value={safetyStatus}
-                  onChange={(e) => setSafetyStatus(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-1 text-sm"
-                >
-                  <option value="All Alerts">All Alerts</option>
-                  <option value="Safe">Safe</option>
-                  <option value="Caution">Caution</option>
-                  <option value="Unsafe">Unsafe</option>
-                </select>
+      {/* Account Settings */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-6">Account Settings</h3>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <Bell className="h-5 w-5 text-gray-600" />
+              <div>
+                <h4 className="font-medium text-gray-900">Email Notifications</h4>
+                <p className="text-sm text-gray-600">Receive updates about your trips and safety alerts</p>
               </div>
             </div>
-            
-            {/* Search and Filter Controls */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search beaches..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                />
-              </div>
-              <select
-                value={selectedState}
-                onChange={(e) => setSelectedState(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                {states.map(state => (
-                  <option key={state} value={state}>{state}</option>
-                ))}
-              </select>
-            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" defaultChecked />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
           </div>
           
-          {/* Map Container */}
-          <div className="relative h-96 bg-gradient-to-br from-blue-100 to-cyan-100">
-            {/* Simulated Map Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-200 via-cyan-100 to-green-100 opacity-50"></div>
-            
-            {/* Beach Markers */}
-            {filteredBeaches.map((beach) => (
-              <button
-                key={beach.id}
-                onClick={() => handleBeachSelect(beach)}
-                className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all hover:scale-110 ${
-                  selectedBeach?.id === beach.id ? 'scale-125 z-10' : ''
-                }`}
-                style={{
-                  left: `${((beach.coordinates.lng - 68) / (97 - 68)) * 100}%`,
-                  top: `${((28 - beach.coordinates.lat) / (28 - 8)) * 100}%`
-                }}
-              >
-                <div className={`w-4 h-4 rounded-full border-2 border-white shadow-lg ${
-                  beach.safetyStatus === 'safe' ? 'bg-green-500' :
-                  beach.safetyStatus === 'caution' ? 'bg-yellow-500' : 'bg-red-500'
-                }`}>
-                </div>
-                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow-lg text-xs font-medium whitespace-nowrap">
-                  {beach.name}
-                </div>
-              </button>
-            ))}
-            
-            {/* Map Legend */}
-            <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-              <h4 className="text-sm font-semibold text-gray-900 mb-2">Legend</h4>
-              <div className="space-y-1">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-xs text-gray-700">Safe</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <span className="text-xs text-gray-700">Caution</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span className="text-xs text-gray-700">Unsafe</span>
-                </div>
+          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <Shield className="h-5 w-5 text-gray-600" />
+              <div>
+                <h4 className="font-medium text-gray-900">Safety Alerts</h4>
+                <p className="text-sm text-gray-600">Get notified about weather and safety conditions</p>
               </div>
             </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" defaultChecked />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
           </div>
         </div>
       </div>
     </div>
   );
-
+  
   const renderContent = () => {
     switch (activeTab) {
       case 'search':
@@ -587,13 +819,7 @@ const Dashboard = ({ user }) => {
           </div>
         );
       case 'profile':
-        return (
-          <div className="text-center py-20">
-            <User className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Profile</h3>
-            <p className="text-gray-600">Manage your account settings</p>
-          </div>
-        );
+        return renderProfileTab();
       default:
         return renderSearchTab();
     }
@@ -607,7 +833,7 @@ const Dashboard = ({ user }) => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome back, {user?.split('@')[0] || 'User'}! 👋
+                Welcome back, {userProfile.name}! 👋
               </h1>
               <p className="text-gray-600">
                 Monitor beach safety conditions and plan your coastal adventures
@@ -639,6 +865,12 @@ const Dashboard = ({ user }) => {
                       onClick={() => {
                         setActiveTab(item.id);
                         setShowMobileMenu(false);
+                        // Reset search states when switching tabs
+                        if (item.id !== 'dashboard') {
+                          setMapSearchQuery('');
+                          setSearchedDestination(null);
+                          setSelectedBeach(null);
+                        }
                       }}
                       className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${
                         activeTab === item.id
@@ -688,121 +920,6 @@ const Dashboard = ({ user }) => {
             
             <div className="p-6">
               <SearchForm />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Beach Details - Shows when a beach is selected in dashboard tab */}
-      {activeTab === 'dashboard' && selectedBeach && (
-        <div className="max-w-7xl mx-auto mt-6 px-6">
-          {/* Beach Header with Safety Status */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">{selectedBeach.name}</h2>
-                <div className="flex items-center space-x-2 text-gray-600 mt-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>{selectedBeach.location}</span>
-                </div>
-              </div>
-              <div className={`flex items-center space-x-2 px-4 py-2 rounded-full border ${getSafetyColor(selectedBeach.safetyStatus)}`}>
-                {getSafetyIcon(selectedBeach.safetyStatus)}
-                <span className="font-semibold capitalize">{selectedBeach.safetyStatus}</span>
-              </div>
-            </div>
-
-            {/* Current Conditions Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-blue-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center space-x-2 mb-2">
-                  <Waves className="h-5 w-5 text-blue-600" />
-                  <span className="text-sm font-medium text-blue-800">Wave Height</span>
-                </div>
-                <p className="text-2xl font-bold text-blue-900">{selectedBeach.currentConditions.waveHeight}m</p>
-              </div>
-
-              <div className="bg-green-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center space-x-2 mb-2">
-                  <Wind className="h-5 w-5 text-green-600" />
-                  <span className="text-sm font-medium text-green-800">Wind Speed</span>
-                </div>
-                <p className="text-2xl font-bold text-green-900">{selectedBeach.currentConditions.windSpeed} km/h</p>
-              </div>
-
-              <div className="bg-purple-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center space-x-2 mb-2">
-                  <Thermometer className="h-5 w-5 text-purple-600" />
-                  <span className="text-sm font-medium text-purple-800">Temperature</span>
-                </div>
-                <p className="text-2xl font-bold text-purple-900">{selectedBeach.currentConditions.waterTemp}°C</p>
-              </div>
-
-              <div className="bg-orange-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center space-x-2 mb-2">
-                  <Eye className="h-5 w-5 text-orange-600" />
-                  <span className="text-sm font-medium text-orange-800">Visibility</span>
-                </div>
-                <p className="text-2xl font-bold text-orange-900">{selectedBeach.currentConditions.visibility} km</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Water Quality & Current Strength */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20">
-              <div className="flex items-center space-x-2 mb-4">
-                <Droplets className="h-6 w-6 text-blue-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Water Quality</h3>
-              </div>
-              <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
-                selectedBeach.currentConditions.waterQuality === 'excellent' ? 'bg-green-100 text-green-800' :
-                selectedBeach.currentConditions.waterQuality === 'good' ? 'bg-blue-100 text-blue-800' :
-                selectedBeach.currentConditions.waterQuality === 'moderate' ? 'bg-yellow-100 text-yellow-800' :
-                'bg-red-100 text-red-800'
-              }`}>
-                {selectedBeach.currentConditions.waterQuality.charAt(0).toUpperCase() + selectedBeach.currentConditions.waterQuality.slice(1)}
-              </div>
-            </div>
-
-            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20">
-              <div className="flex items-center space-x-2 mb-4">
-                <Navigation className="h-6 w-6 text-blue-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Current Strength</h3>
-              </div>
-              <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
-                selectedBeach.currentConditions.currentStrength === 'mild' ? 'bg-green-100 text-green-800' :
-                selectedBeach.currentConditions.currentStrength === 'moderate' ? 'bg-yellow-100 text-yellow-800' :
-                selectedBeach.currentConditions.currentStrength === 'strong' ? 'bg-orange-100 text-orange-800' :
-                'bg-red-100 text-red-800'
-              }`}>
-                {selectedBeach.currentConditions.currentStrength.charAt(0).toUpperCase() + selectedBeach.currentConditions.currentStrength.slice(1)}
-              </div>
-            </div>
-          </div>
-
-          {/* Recreational Activities */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-white/20">
-            <div className="flex items-center space-x-2 mb-6">
-              <Activity className="h-6 w-6 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Recreational Activities</h3>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.entries(selectedBeach.activities).map(([activity, data]) => (
-                <div key={activity} className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-3xl mb-2">{getActivityIcon(activity)}</div>
-                  <h4 className="font-medium text-gray-900 capitalize mb-2">{activity}</h4>
-                  <span className={`text-xs px-3 py-1 rounded-full font-medium ${getActivityColor(data.status)}`}>
-                    {data.status.charAt(0).toUpperCase() + data.status.slice(1)}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Last Updated */}
-            <div className="mt-6 text-center text-sm text-gray-500">
-              Last updated: {new Date(selectedBeach.lastUpdated).toLocaleString()}
             </div>
           </div>
         </div>
